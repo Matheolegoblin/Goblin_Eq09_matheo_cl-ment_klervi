@@ -5,7 +5,7 @@ import java.sql.Statement;
 
 public class BasesJDBC {
 	public static void main(String[] args) throws Exception {
-		Class.forName( "org.hsqldb.jdbcDriver" );
+		Class.forName( "org.hsqldb.jdbcDriver" ); 
 
 		String url = "jdbc:hsqldb:file:database"+File.separator+"basic;shutdown=true";
 		String login = "sa";
