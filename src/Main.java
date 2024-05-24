@@ -1,7 +1,6 @@
 /*public class Main {
-	public static void main(String[] args) throws Exception {
-		Class.forName("org.hsqldb.jdbcDriver");
-		System.out.println("+------------------------------+");
+	public static void main(String[] args) {
+		System.out.println("+------------------------------+bb");
         System.out.println("|            GOBLIN            |");
 		System.out.println("+------------------------------+");
 	}
