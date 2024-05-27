@@ -12,42 +12,30 @@ public class BasesJDBC {
 		String password = "";
 		try (Connection connection = DriverManager.getConnection( url, login, password )){
 
-			String requete = "DROP TABLE CLIENTS IF EXISTS;";
+			String requete = "DROP TABLE COMMANDE IF EXISTS;" 
+			+ "DROP TABLE ENTREPOTS IF EXISTS;"
+			+"DROP TABLE ROUTES IF EXISTS;"
+			+"DROP TABLE CLIENTS IF EXISTS;"
+			+"DROP TABLE SITE IF EXISTS;";
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
-			requete = "DROP TABLE SITES IF EXISTS;";
-			try ( Statement statement = connection.createStatement() ) {
-				statement.executeUpdate( requete );
-			}
-			requete = "DROP TABLE ROUTES IF EXISTS;";
-			try ( Statement statement = connection.createStatement() ) {
-				statement.executeUpdate( requete );
-			}
-			requete = "DROP TABLE ENTREPOTS IF EXISTS;";
-			try ( Statement statement = connection.createStatement() ) {
-				statement.executeUpdate( requete );
-			}
-			requete = "DROP TABLE COMMANDE IF EXISTS;";
+			
+			requete = "CREATE TABLE SITE ("
+					+"id_site int,"
+					+"x int,"
+					+"y int,"
+					+ "PRIMARY KEY(id_site))";
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
 			requete = "CREATE TABLE CLIENTS ("
-					+"id site int,"
-					+"mail varchar(50),"
-					+"nom varchar(20),"
-					+"PRIMARY KEY(mail)"
-					+"FOREIGN KEY(id site) reference SITES(id site))";
+			        + "id_site int,"
+			        + "mail varchar(50),"
+			        + "nom varchar(20),"
+			        + "PRIMARY KEY(mail),"
+			        + "FOREIGN KEY(id_site) REFERENCES SITE(id_site))";
 
-			try ( Statement statement = connection.createStatement() ) {
-				statement.executeUpdate( requete );
-			}
-
-			requete = "CREATE TABLE SITES ("
-					+"id site int,"
-					+"x int,"
-					+"y int,"
-					+ "PRIMARY KEY(id site))";
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
@@ -60,29 +48,29 @@ public class BasesJDBC {
 				statement.executeUpdate( requete );
 			}
 			requete = "CREATE TABLE ENTREPOTS ("
-					+" id entrepot int,"
-					+"id site int,"
-					+ "cout fixe int,"
-					+ " stock int,"
-					+ "PRIMARY KEY (id entrepot)"
-					+ " FOREIGN KEY (id site) reference SITES(id site))";
+			        + "id_entrepot int,"
+			        + "id_site int,"
+			        + "cout_fixe int,"
+			        + "stock int,"
+			        + "PRIMARY KEY(id_entrepot),"
+			        + "FOREIGN KEY(id_site) REFERENCES SITE(id_site))";
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
 			requete = "CREATE TABLE COMMANDE ("
-					+" date int,"
-					+"mail varchar(50),"
-					+ "quantite demande int,"
-					+ "entrepots dispo int,"
-					+"id entrepot int"
-					+ "PRIMARY KEY (date)"
-					+ "FOREIGN KEY (mail) reference CLIENTS(mail)"
-					+ "FOREIGN KEY (id entrepot) reference ENTREPOTS(id entrepot))";
+			        + "date int,"
+			        + "mail varchar(50),"
+			        + "quantite_demande int,"
+			        + "entrepots_dispo int,"
+			        + "id_entrepot int,"
+			        + "PRIMARY KEY (date),"
+			        + "FOREIGN KEY (mail) REFERENCES CLIENTS(mail),"
+			        + "FOREIGN KEY (id_entrepot) REFERENCES ENTREPOTS(id_entrepot))";
 
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
-
+			System.out.println("Tables créer avec succés !");
 		}
 	}
 }
