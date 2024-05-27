@@ -5,9 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-
-import com.opencsv.bean.CsvToBeanBuilder;
-
 /*public class ReadCSVData {
 	private static final String CSV_FILE_CUSTOM_SEPARATOR 
     = "Jeux_de_donnees"+File.separator+"petit"+File.separator+"init-clients-30-10-Carre.csv"; 
