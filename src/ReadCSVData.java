@@ -18,9 +18,17 @@ public class ReadCSVData {
     private static final String CSV_FILE_CUSTOM_SEPARATOR2
     = "Jeux_de_donnees" + File.separator + "petit" + File.separator + "init-routes-30-45-Carre.csv"; 
     
+    private static final String CSV_FILE_CUSTOM_SEPARATOR3
+    = "Jeux_de_donnees" + File.separator + "petit" + File.separator + "init-entrepots-30-5-Carre.csv"; 
+    
+    private static final String CSV_FILE_CUSTOM_SEPARATOR4
+    = "Jeux_de_donnees" + File.separator + "petit" + File.separator + "init-sites-30-Carre.csv"; 
+    
     public static void main(String[] args) { 
         List<Client> beans = null;
         List<Routes> RT = null;
+        List<Entrepot> ENT = null;
+        List<Sites> ST = null;
         try {
             beans = new CsvToBeanBuilder<Client>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR1))
                     .withType(Client.class)
@@ -34,12 +42,27 @@ public class ReadCSVData {
                     .build()
                     .parse();
             
+            ENT = new CsvToBeanBuilder<Entrepot>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR3))
+                    .withType(Entrepot.class)
+                    .withSeparator(';')
+                    .build()
+                    .parse();
+            
+            ST = new CsvToBeanBuilder<Sites>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR4))
+                    .withType(Sites.class)
+                    .withSeparator(';')
+                    .build()
+                    .parse();
+            
         } catch (IllegalStateException | FileNotFoundException e) {
             e.printStackTrace();
         }
 
         insertClientsIntoDatabase(beans);
         insertRoutesIntoDatabase(RT);
+        insertEntrepotIntoDatabase(ENT);
+        insertSitesIntoDatabase(ST);
+        
     }
 
 ////////////////////////////////CLIENTS///////////////////////////////////////////////
@@ -126,7 +149,39 @@ public class ReadCSVData {
     
 ////////////////////////////////////////////////SITES///////////////////////////////////////////
 
-
+private static void insertRoutesIntoDatabase(List<Sites> sites) {
+    String url = "jdbc:hsqldb:file:database" + File.separator + "basic;shutdown=true";
+    String login = "sa";
+    String password = "";
+    
+    String insertSitesSQL = "INSERT INTO SITES(id_sites,x,y) VALUES (?,?,?)";
+    
+    try (Connection connection = DriverManager.getConnection(url, login, password)) {
+        connection.setAutoCommit(false);
+        try (
+             PreparedStatement insertSitesStmt = connection.prepareStatement(insertSitesSQL)) {
+            
+            for (Sites S : sites) {
+                
+                insertSitesStmt.setLong(1, S.getOrigine());
+                insertSitesStmt.setLong(2, S.getDestination());
+                insertSitesStmt.setLong(2, S.getDestination());
+                insertSitesStmt.addBatch();
+            }
+            
+            insertSitesStmt.executeBatch();
+            connection.commit();
+            System.out.println("Les données sites ont été inséré avec succées ! GG ");
+            
+        } catch (SQLException e) {
+            connection.rollback(); 
+            e.printStackTrace();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+}
     
 ////////////////////////////////////////////////ENTREPOS///////////////////////////////////////////
     
