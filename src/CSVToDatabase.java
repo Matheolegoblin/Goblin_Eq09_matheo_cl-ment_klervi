@@ -13,7 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class CSVToDatabase{
+/*public class CSVToDatabase{
 
 	try { 
 	    // Create an object of file reader 
@@ -42,6 +42,62 @@ public class CSVToDatabase{
 	    e.printStackTrace(); 
 	} 
 }
+}*/
+
+public class Main 
+{
+  //Délimiteurs qui doivent être dans le fichier CSV
+  private static final String DELIMITER = ",";
+    private static final String SEPARATOR = "\n";
+    
+    //En-tête de fichier
+    private static final String HEADER = "Nom,Email,Idsite";
+    
+    public static void main(String args[])
+    {
+      //Création des objets
+      Book book1 = new Book("Darkness to Light", "Lamar Odam", 1992);
+      Book book2 = new Book("We Are Displaced", "Malala Yousafzai", 1981);
+      Book book3 = new Book("I Am Malala", "Christina Lamb", 1978);
+      Book book4 = new Book("Girl Women", "Satyarth Nayak", 1966);
+      Book book5 = new Book("Forgotten Past", "Peter Baker", 1971);
+      //Ajouter les objets à la liste
+      List bookList = new ArrayList();
+      bookList.add(book1);
+      bookList.add(book2);
+      bookList.add(book3);
+      bookList.add(book4);
+      bookList.add(book5);
+      
+      FileWriter file = null;
+      
+      try
+      {
+        file = new FileWriter("Book.csv");
+        //Ajouter l'en-tête
+        file.append(HEADER);
+        //Ajouter une nouvelle ligne après l'en-tête
+        file.append(SEPARATOR);
+        //Itérer bookList
+        Iterator it = bookList.iterator();
+        while(it.hasNext())
+        {
+          Book b = (Book)it.next();
+          file.append(b.getTitle());
+          file.append(DELIMITER);
+          file.append(b.getAuthor());
+          file.append(DELIMITER);
+          file.append(String.valueOf(b.getYear()));
+          file.append(SEPARATOR);
+        }
+      
+        file.close();
+      }
+      catch(Exception e)
+      {
+        e.printStackTrace();
+      }
+    }
 }
 
 
