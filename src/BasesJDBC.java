@@ -70,7 +70,7 @@ public class BasesJDBC {
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
-			System.out.println("Tables créer avec succés !");
+			System.out.println("Table créer avec succés !");
 		}
 	}
 }

@@ -1,40 +1,132 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-/*public class ReadCSVData {
-
-	private static final String CSV_FILE_CUSTOM_SEPARATOR 
-    = "Jeux_de_donnees"+File.separator+"petit"+File.separator+"init-clients-30-10-Carre.csv"; 
-	
-	public static void main(String[] args) 
-	{ 
-		List<Client> beans = new CsvToBeanBuilder(new FileReader(CSV_FILE_CUSTOM_SEPARATOR ))
-				.withType(Client.class).withSeparator(';').build().parse();
-		System.out.println(beans);
-
-
-	}
-
-}*/
-
-import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 
 public class ReadCSVData {
-    public static void main(String[] args) {
-        String fileName = "Jeux_de_donnees/petit/init-clients-30-10-Carre.csv";
 
-        try (FileReader reader = new FileReader(fileName)) {
-            CsvToBean<Client> csvToBean = new CsvToBeanBuilder<Client>(reader)
-                .withType(Client.class)
-                .withSeparator(';')
-                .build();
+    private static final String CSV_FILE_CUSTOM_SEPARATOR1
+        = "Jeux_de_donnees" + File.separator + "petit" + File.separator + "init-clients-30-10-Carre.csv";
+    
+    private static final String CSV_FILE_CUSTOM_SEPARATOR2
+    = "Jeux_de_donnees" + File.separator + "petit" + File.separator + "init-routes-30-45-Carre.csv"; 
+    
+    public static void main(String[] args) { 
+        List<Client> beans = null;
+        List<Routes> RT = null;
+        try {
+            beans = new CsvToBeanBuilder<Client>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR1))
+                    .withType(Client.class)
+                    .withSeparator(';')
+                    .build()
+                    .parse();
+            
+            RT = new CsvToBeanBuilder<Routes>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR2))
+                    .withType(Routes.class)
+                    .withSeparator(';')
+                    .build()
+                    .parse();
+            
+        } catch (IllegalStateException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
-            List<Client> beans = csvToBean.parse();
-            beans.forEach(System.out::println);
-        } catch (IOException e) {
+        insertClientsIntoDatabase(beans);
+        insertRoutesIntoDatabase(RT);
+    }
+
+////////////////////////////////CLIENTS///////////////////////////////////////////////
+    private static void insertClientsIntoDatabase(List<Client> clients) {
+        String url = "jdbc:hsqldb:file:database" + File.separator + "basic;shutdown=true";
+        String login = "sa";
+        String password = "";
+        
+        String checkSiteSQL = "SELECT COUNT(*) FROM SITE WHERE id_site = ?";
+        String insertSiteSQL = "INSERT INTO SITE (id_site, x, y) VALUES (?, 0, 0)";
+        String insertClientSQL = "INSERT INTO CLIENTS (id_site, mail, nom) VALUES (?, ?, ?)";
+        
+        try (Connection connection = DriverManager.getConnection(url, login, password)) {
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement checkSiteStmt = connection.prepareStatement(checkSiteSQL);
+                 PreparedStatement insertSiteStmt = connection.prepareStatement(insertSiteSQL);
+                 PreparedStatement insertClientStmt = connection.prepareStatement(insertClientSQL)) {
+                
+                for (Client client : clients) {
+                   
+                    checkSiteStmt.setString(1, client.getIdSite());
+                    ResultSet rs = checkSiteStmt.executeQuery();
+                    rs.next();
+                    if (rs.getInt(1) == 0) {
+                   
+                        insertSiteStmt.setString(1, client.getIdSite());
+                        insertSiteStmt.executeUpdate();
+                    }
+                    
+                    insertClientStmt.setString(1, client.getIdSite());
+                    insertClientStmt.setString(2, client.getMail());
+                    insertClientStmt.setString(3, client.getNom());
+                    insertClientStmt.addBatch();
+                }
+                
+                insertClientStmt.executeBatch();
+                connection.commit();
+                System.out.println("Les données clients ont été inséré avec succées ! GG ");
+                
+            } catch (SQLException e) {
+                connection.rollback(); 
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+////////////////////////////////////////////////ROUTES//////////////////////////////////////////
+    private static void insertRoutesIntoDatabase(List<Routes> routes) {
+        String url = "jdbc:hsqldb:file:database" + File.separator + "basic;shutdown=true";
+        String login = "sa";
+        String password = "";
+        
+        String insertRouteSQL = "INSERT INTO ROUTES(origine, destination) VALUES (?,?)";
+        
+        try (Connection connection = DriverManager.getConnection(url, login, password)) {
+            connection.setAutoCommit(false);
+            try (
+                 PreparedStatement insertRouteStmt = connection.prepareStatement(insertRouteSQL)) {
+                
+                for (Routes R : routes) {
+                    
+                    insertRouteStmt.setLong(1, R.getOrigine());
+                    insertRouteStmt.setLong(2, R.getDestination());
+                    insertRouteStmt.addBatch();
+                }
+                
+                insertRouteStmt.executeBatch();
+                connection.commit();
+                System.out.println("Les données routes ont été inséré avec succées ! GG ");
+                
+            } catch (SQLException e) {
+                connection.rollback(); 
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 }
+    
+    
+////////////////////////////////////////////////SITES///////////////////////////////////////////
+
+
+    
+////////////////////////////////////////////////ENTREPOS///////////////////////////////////////////
+    
