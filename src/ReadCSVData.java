@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ReadCSVData {
     public static void main(String[] args) {
-        String fileName = "Jeux_de_donnees/petit/init-clients-30-10-Carre.csv";
+        String fileName = "Jeux_de_donnees"+File.separator+"petit"+File.separator+"init-clients-30-10-Carre.csv";
 
         try (FileReader reader = new FileReader(fileName)) {
             CsvToBean<Client> csvToBean = new CsvToBeanBuilder<Client>(reader)
