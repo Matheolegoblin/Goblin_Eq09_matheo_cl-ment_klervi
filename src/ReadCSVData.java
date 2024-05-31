@@ -26,12 +26,12 @@ public class ReadCSVData {
     = "Jeux_de_donnees" + File.separator + "petit" + File.separator + "init-sites-30-Carre.csv"; 
     
     public static void main(String[] args) { 
-        List<Client> beans = null;
+        List<Client> CL = null;
         List<Routes> RT = null;
-        List<Entrepot> ENT = null;
+        List<Entrepots> ENT = null;
         List<Sites> ST = null;
         try {
-            beans = new CsvToBeanBuilder<Client>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR1))
+            CL = new CsvToBeanBuilder<Client>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR1))
                     .withType(Client.class)
                     .withSeparator(';')
                     .build()
@@ -43,8 +43,8 @@ public class ReadCSVData {
                     .build()
                     .parse();
             
-            ENT = new CsvToBeanBuilder<Entrepot>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR3))
-                    .withType(Entrepot.class)
+            ENT = new CsvToBeanBuilder<Entrepots>(new FileReader(CSV_FILE_CUSTOM_SEPARATOR3))
+                    .withType(Entrepots.class)
                     .withSeparator(';')
                     .build()
                     .parse();
@@ -59,10 +59,10 @@ public class ReadCSVData {
             e.printStackTrace();
         }
 
-        insertClientsIntoDatabase(beans);
-        insertRoutesIntoDatabase(RT);
-        insertEntrepotIntoDatabase(ENT);
         insertSitesIntoDatabase(ST);
+        insertClientsIntoDatabase(CL);
+        insertRoutesIntoDatabase(RT);
+        insertEntrepotsIntoDatabase(ENT);
         
     }
 
@@ -127,7 +127,6 @@ public class ReadCSVData {
                  PreparedStatement insertRouteStmt = connection.prepareStatement(insertRouteSQL)) {
                 
                 for (Routes R : routes) {
-                    
                     insertRouteStmt.setLong(1, R.getOrigine());
                     insertRouteStmt.setLong(2, R.getDestination());
                     insertRouteStmt.addBatch();
@@ -145,17 +144,16 @@ public class ReadCSVData {
             e.printStackTrace();
         }
     }
-}
     
     
 ////////////////////////////////////////////////SITES///////////////////////////////////////////
 
-private static void insertRoutesIntoDatabase(List<Sites> sites) {
+private static void insertSitesIntoDatabase(List<Sites> sites) {
     String url = "jdbc:hsqldb:file:database" + File.separator + "basic;shutdown=true";
     String login = "sa";
     String password = "";
     
-    String insertSitesSQL = "INSERT INTO SITES(id_sites,x,y) VALUES (?,?,?)";
+    String insertSitesSQL = "INSERT INTO SITE(id_site,x,y) VALUES (?,?,?)";
     
     try (Connection connection = DriverManager.getConnection(url, login, password)) {
         connection.setAutoCommit(false);
@@ -164,9 +162,9 @@ private static void insertRoutesIntoDatabase(List<Sites> sites) {
             
             for (Sites S : sites) {
                 
-                insertSitesStmt.setLong(1, S.getOrigine());
-                insertSitesStmt.setLong(2, S.getDestination());
-                insertSitesStmt.setLong(2, S.getDestination());
+                insertSitesStmt.setLong(1, S.getIdSite());
+                insertSitesStmt.setLong(2, S.getX());
+                insertSitesStmt.setLong(3, S.getY());
                 insertSitesStmt.addBatch();
             }
             
@@ -182,7 +180,41 @@ private static void insertRoutesIntoDatabase(List<Sites> sites) {
         e.printStackTrace();
     }
 }
-}
+
     
 ////////////////////////////////////////////////ENTREPOS///////////////////////////////////////////
     
+private static void insertEntrepotsIntoDatabase(List<Entrepots> En) {
+    String url = "jdbc:hsqldb:file:database" + File.separator + "basic;shutdown=true";
+    String login = "sa";
+    String password = "";
+    
+    String insertEntrepotsSQL = "INSERT INTO ENTREPOTS(id_entrepot,id_site,cout_fixe,stock) VALUES (?,?,?,?)";
+    
+    try (Connection connection = DriverManager.getConnection(url, login, password)) {
+        connection.setAutoCommit(false);
+        try (
+             PreparedStatement insertEntrepotsStmt = connection.prepareStatement(insertEntrepotsSQL)) {
+            
+            for (Entrepots E : En) {
+                
+            	insertEntrepotsStmt.setLong(1, E.getIdEntrepot());
+            	insertEntrepotsStmt.setLong(2, E.getIdSite());
+            	insertEntrepotsStmt.setLong(3, E.getCoutFixe());
+            	insertEntrepotsStmt.setLong(4, E.getStock());
+            	insertEntrepotsStmt.addBatch();
+            }
+            
+            insertEntrepotsStmt.executeBatch();
+            connection .commit();
+            System.out.println("Les données entrepots ont été inséré avec succées ! GG ");
+            
+        } catch (SQLException e) {
+            connection.rollback(); 
+            e.printStackTrace();
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+}

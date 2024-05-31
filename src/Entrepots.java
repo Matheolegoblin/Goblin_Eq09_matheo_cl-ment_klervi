@@ -15,13 +15,6 @@ public class Entrepots {
     private int Stock;
     
     
-    public Entrepots( int identrepot, int idsite, int cout, int stock) {
-    	this.IdEntrepot = identrepot;
-    	this.IdSite = idsite;
-    	this.CoutFixe = cout;
-    	this.Stock = stock;
-    }
-    
     /**
 	 * @return the identrepot
 	 */
