@@ -9,14 +9,14 @@
 	   public static void main(String args[]) {
 	      JsonParser jsonP = new JsonParser();
 	      try {
-	         JsonObject jsonO = (JsonObject)jsonP.parse(new FileReader("C:\\Users\\mathe\\Downloads\\data-exemple-mini (1).json"));
+	         JsonObject jsonO = (JsonObject)jsonP.parse(new FileReader("json"+file.seperator+"fichier.json"));
 	    	  
 	         JsonElement name = (JsonElement) jsonO.get("capacity_facility");
-	         JsonElement age = (JsonElement) jsonO.get("fixed_cost_facility");
+	         JsonElement cout = (JsonElement) jsonO.get("fixed_cost_facility");
 	         JsonElement address = (JsonElement) jsonO.get("demand_customer");
 
 	         System.out.println("capacity_facility :"+ name);
-	         System.out.println("fixed_cost_facility : "+ age);
+	         System.out.println("fixed_cost_facility : "+ cout);
 	         System.out.println("demand_customer :"+ address);
 	         
 	      } catch (FileNotFoundException e) {

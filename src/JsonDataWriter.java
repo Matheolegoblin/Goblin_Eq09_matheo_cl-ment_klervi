@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import com.google.gson.JsonObject;
@@ -7,7 +8,8 @@ import com.google.gson.JsonObject;
 public class JsonDataWriter {
 	    public static void main(String[] args) {
 	        JsonObject jsonObject = new JsonObject();
-	        try (FileWriter file = new FileWriter("C:\\Users\\mathe\\Downloads\\MdrcaMarche.json")) {
+	        String filePath = "json"+File.separator+"fichier.json";
+	        try (FileWriter file = new FileWriter(filePath)) {
 	            file.write(jsonObject.toString());
 	            file.flush();
 	        } catch (IOException e) {
