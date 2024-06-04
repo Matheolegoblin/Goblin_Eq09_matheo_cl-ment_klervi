@@ -10,13 +10,6 @@ public class Sites {
 	
 	@CsvBindByName (column = "y", required = true)
 	private int Y;
-
-	
-	public Sites( int idsite, int x, int y) {
-		this.IdSite = idsite;
-		this.X = x;
-		this.Y = y;
-	}
 	
 	/**
 	 * @return the idsite

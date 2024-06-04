@@ -1,6 +1,7 @@
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class BasesJDBC {
@@ -70,7 +71,16 @@ public class BasesJDBC {
 			try ( Statement statement = connection.createStatement() ) {
 				statement.executeUpdate( requete );
 			}
-			System.out.println("Tables créer avec succés !");
+			
+			
+			requete = "SELECT stock FROM ENTREPOTS";
+			try ( Statement statement = connection.createStatement() ) {
+				try (ResultSet resultSet = statement.executeQuery( requete ) ) {
+				
+			System.out.println("Table créer avec succés !");
 		}
 	}
+
+}
+}
 }

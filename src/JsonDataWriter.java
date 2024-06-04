@@ -3,8 +3,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import com.google.gson.JsonObject;
 
-
-
 public class JsonDataWriter {
 	    public static void main(String[] args) {
 	        JsonObject jsonObject = new JsonObject();

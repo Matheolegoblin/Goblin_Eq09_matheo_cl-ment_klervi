@@ -7,12 +7,6 @@ public class Routes {
 
 	@CsvBindByName (column = "destination", required = true)
 	private int Destination;
-
-	
-	public Routes( int origine, int destination) {
-		this.Origine = origine;
-		this.Destination = destination;
-	}
 	
 	/**
 	 * @return the origine
