@@ -1,8 +1,25 @@
 import java.util.*;
+
+
 import java.io.File;
 import java.sql.*;
 public class Dikjstra {
 
+	public static void dijkstra(Client matrice, int start) {
+		int n = matrice.getNb();
+        boolean[] mark = new boolean[n];
+        int[] val = new int[n];
+        int[] pred = new int[n];
+        
+        Arrays.fill(val, Integer.MAX_VALUE / 2);
+        Arrays.fill(pred, -1);
+
+        val[start] = 0;
+        pred[start] = start;
+        
+	}
+	
+	
 	private static Map<Integer, Map<Integer, Integer>> buildGraph() {
 		Map<Integer, Map<Integer, Integer>> graph = new HashMap<>();
 
